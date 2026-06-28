@@ -1,0 +1,10 @@
+{
+  "name": "streamverse-recommendation-service-java",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "javac -cp \"lib/*\" -d build $(find src -name '*.java')",
+    "dev": "./run.sh",
+    "start": "java -cp \"build:lib/*\" com.streamverse.recommendation.Main"
+  }
+}

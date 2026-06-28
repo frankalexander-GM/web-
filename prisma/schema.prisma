@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  email         String   @unique
+  displayName   String
+  avatar        String?
+  banner        String?
+  bio           String?
+  isStreamer    Boolean  @default(false)
+  platform      String?  // twitch | kick | youtube
+  channelHandle String?  // handle en la plataforma
+  frameId       String?  // marco de perfil comprado
+  level         Int      @default(1)
+  xp            Int      @default(0)
+  coins         Int      @default(500)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relaciones
+  posts         Post[]
+  likes         Like[]
+  comments      Comment[]
+  purchases     Purchase[]
+  memberships   CommunityMember[]
+
+  // Self-relation para follows
+  following     Follow[] @relation("follower")
+  followers     Follow[] @relation("following")
+  streams       Stream[]
+
+  @@map("users")
+}
+
+model Community {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  icon        String
+  banner      String?
+  category    String   // roblox | minecraft | fortnite | valorant | lol | etc
+  color       String   // color de acento
+  membersCount Int     @default(0)
+  createdAt   DateTime @default(now())
+
+  members     CommunityMember[]
+
+  @@map("communities")
+}
+
+model CommunityMember {
+  id          String   @id @default(cuid())
+  userId      String
+  communityId String
+  role        String   @default("member") // member | mod | admin
+  joinedAt    DateTime @default(now())
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community   Community  @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, communityId])
+  @@map("community_members")
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  authorId    String
+  content     String
+  image       String?
+  likesCount  Int      @default(0)
+  commentsCount Int    @default(0)
+  createdAt   DateTime @default(now())
+
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes       Like[]
+  comments    Comment[]
+
+  @@map("posts")
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model StoreItem {
+  id          String   @id @default(cuid())
+  type        String   // logo | balloon | banner | frame
+  name        String
+  description String
+  price       Int
+  image       String
+  preview     String?  // preview url
+  creator     String
+  rarity      String   @default("common") // common | rare | epic | legendary
+  color       String?
+  sales       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  purchases   Purchase[]
+
+  @@map("store_items")
+}
+
+model Purchase {
+  id          String   @id @default(cuid())
+  userId      String
+  itemId      String
+  createdAt   DateTime @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item        StoreItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+  @@map("purchases")
+}
+
+model Stream {
+  id          String   @id @default(cuid())
+  platform    String   // twitch | kick | youtube
+  channel     String   // nombre del canal / id
+  title       String
+  streamerId  String?
+  category    String
+  thumbnail   String
+  viewers     Int      @default(0)
+  isLive      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  streamer    User? @relation(fields: [streamerId], references: [id], onDelete: SetNull)
+
+  @@map("streams")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  username  String
+  content   String
+  color     String   @default("#a855f7")
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  @@map("chat_messages")
+}

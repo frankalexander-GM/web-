@@ -1,0 +1,54 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+.next/
+out/
+build/
+dist/
+
+# JDK portable (descargado para compilar Java, no pertenece al proyecto)
+.jdk/
+
+# Base de datos
+db/*.db
+db/*.db-journal
+
+# Logs
+*.log
+dev.log
+chat-python.log
+java-service.log
+
+# Capturas de pantalla (no son código)
+screenshots/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Variables de entorno locales
+.env.local
+.env*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# JARs de librerías Java (se descargan aparte, ver mini-services/recommendation-service-java/README)
+mini-services/recommendation-service-java/lib/*.jar
+mini-services/recommendation-service-java/build/
+
+# Archivos compilados
+*.class
+
+# Skills del entorno (no son parte del proyecto)
+skills/
+download/
+
+# Build info
+*.tsbuildinfo
