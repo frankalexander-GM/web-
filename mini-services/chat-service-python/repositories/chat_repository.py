@@ -10,7 +10,7 @@ import logging
 import sqlite3
 from typing import List, Optional
 
-from models import ChatMessage, generate_id, now_iso
+from models import ChatMessage
 
 logger = logging.getLogger("streamverse.chat.repository")
 

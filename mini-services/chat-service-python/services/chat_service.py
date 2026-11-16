@@ -9,7 +9,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import random
-from typing import Dict, List, Set
+from typing import Dict, List
 from urllib.parse import quote
 
 from config import settings
