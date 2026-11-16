@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 /**
  * Punto de entrada del servicio de recomendaciones (Java).
@@ -103,7 +104,12 @@ public class Main {
         } catch (Exception e) {
             System.err.println("[java] Error atendiendo petición: " + e.getMessage());
         } finally {
-            try { client.close(); } catch (Exception ignored) {}
+            try {
+                client.close();
+            } catch (Exception e) {
+                // close fallido no debe tapar el error original
+                Logger.getLogger(Main.class.getName()).fine("close del socket fallo: " + e.getMessage());
+            }
         }
     }
 }

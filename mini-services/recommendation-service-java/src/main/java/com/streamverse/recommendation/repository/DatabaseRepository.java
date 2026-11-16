@@ -7,6 +7,7 @@ import com.streamverse.recommendation.model.Streamer;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Capa de acceso a datos (Repository Pattern).
@@ -14,6 +15,8 @@ import java.util.List;
  * Lee de la misma base SQLite que Prisma/Next.js.
  */
 public class DatabaseRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(DatabaseRepository.class.getName());
 
     private Connection connection;
 
@@ -31,7 +34,12 @@ public class DatabaseRepository {
     /** Cierra la conexión. */
     public void close() {
         if (connection != null) {
-            try { connection.close(); } catch (SQLException ignored) {}
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // close fallido no debe tapar el error original
+                LOGGER.fine("close de SQLite fallo: " + e.getMessage());
+            }
         }
     }
 
